@@ -1,2 +1,4 @@
 pythonbackend/modelplant.h5
 pythonbackend/detection.py
+frontend/node_modules
+uHackBackend/node_modules
