@@ -54,6 +54,13 @@ const Home = () => {
       );
       if (res.status === 200) {
         setUser(res.data.data.user);
+        console.log(res.data.data.user)
+        navigate("/dashboard",{
+          state: {
+            //...values
+            user : res.data.data.user
+          }
+        });
       }
     } catch (e) {
       console.log(e);

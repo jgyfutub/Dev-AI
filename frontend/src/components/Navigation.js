@@ -54,11 +54,11 @@ const Navigation = (props) => {
                 alt="Flowbite Logo"
               />
               <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                Collegesy
+                Dev-AI
               </span>
             </Link>
-            <div className="flex space-x-2 md:order-2 m-2">
-              <button
+            <div className="flex space-x-10 md:order-2 m-2">
+              {/* <button
                 type="button"
                 className="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 text-center mr-3 md:mr-0 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
               >
@@ -70,9 +70,9 @@ const Navigation = (props) => {
                 >
                   Sell
                 </Link>
-              </button>
+              </button> */}
 
-              <button
+              {/* <button
                 type="button"
                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
@@ -84,7 +84,18 @@ const Navigation = (props) => {
                 >
                   {notification ? <span>🔔</span> : <>Chats</>}
                 </Link>
-              </button>
+              </button> */}
+
+                  <Link
+                    to="/"
+                    state={{
+                      user: props.user,
+                    }}
+                    className="block mt-4 mt-1 py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500"
+                    aria-current="page"
+                  >
+                    {props.user.role}
+                  </Link>
 
               <button
                 type="button"
@@ -111,7 +122,7 @@ const Navigation = (props) => {
               className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
               id="navbar-sticky"
             >
-              <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+              {/* <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                 <li>
                   <Link
                     to="/"
@@ -121,14 +132,14 @@ const Navigation = (props) => {
                     className="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500"
                     aria-current="page"
                   >
-                    Home
+                    {props.user.role}
                   </Link>
                 </li>
                 <li>
                   <form className="flex items-center">
-                    {/* <label htmlFor="simple-search" className="sr-only">
+                    <label htmlFor="simple-search" className="sr-only">
                       Search
-                    </label> */}
+                    </label>
                     <div className="relative w-full">
                       <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                         <svg
@@ -217,7 +228,7 @@ const Navigation = (props) => {
                     </button>
                   </form>
                 </li>
-              </ul>
+              </ul> */}
             </div>
           </div>
         </nav>

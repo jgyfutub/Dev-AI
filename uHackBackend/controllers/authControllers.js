@@ -60,6 +60,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     username: req.body.username,
     password: req.body.password,
     role: req.body.role || 'student',
+    college : req.body.college || '',
     passwordConfirm: req.body.passwordConfirm,
   });
   if (!newUser) next(new AppError(`Account can't be created`), 404);

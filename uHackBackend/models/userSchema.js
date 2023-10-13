@@ -30,6 +30,7 @@ const UserSchema = new mongoose.Schema({
         enum : ['student','researcher','industrialist'],
         default : 'student'
     },
+    college : String,
     password : {
         type : String,
         minlength : [8,'try longer password'],
