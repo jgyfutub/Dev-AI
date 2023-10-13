@@ -4,6 +4,23 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 
+const plantFile = require('./../public/PlantData.json')
+const allPlantData = plantFile.map((i,obj,arr)=>{
+    return obj;
+});
+
+// module.exports = function verifylogin(username,password)
+// {
+//     const useracc = allAccountsobj.find(function(useraccs){
+//         if(useraccs.owner === username)
+//             return true;
+//         return undefined;
+//     })
+//     if(!useracc || useracc.pin != Number(password))
+//         return undefined;
+//     return useracc;
+// }
+
 const multerStorage = multer.memoryStorage();
 
 const multerFilter = (req, file, cb) => {
@@ -30,18 +47,16 @@ exports.userPhotoReOrg = (req, res, next) => {
   next();
 };
 
-const studentSerach = (req)=>{
-  
-}
-const researcherSearch = (req)=>{
-
-}
 exports.searchPlant = catchAsync(async (req,res,next)=>{
-    const jsRes = "";
-    if(req.user.role == 'student')
-      jsRes = studentSerach(req);
+    const jsRes = {plantName : req.plantName};
+    const plantData = allPlantData.filter(plant=>{
+      if(plant.plantName == req.plantName) return true;
+      return false;
+    })
+    plantData = plantData && plantData[0].Links;
+    if(req.user.role == 'student');
     else 
-      jsRes = researcherSearch(req);
+      jsRes.links = plantData;
 
     res.status(200).json({
       status : 'success',
