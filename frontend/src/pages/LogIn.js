@@ -180,7 +180,7 @@ const LogIn = () => {
             </div>
           </div>
           <div className='text-center sm:text-center whitespace-nowrap'>
-            <h1>Does't have an Account? <NavLink to='/signup'>SignUp</NavLink></h1>
+            <h1 className='h1-new'>Doesn't have an Account? <NavLink to='/signup'>SignUp</NavLink></h1>
           </div>
         </div>
       </div>
