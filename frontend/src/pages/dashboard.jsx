@@ -7,7 +7,7 @@ import Modal from "../components/Modal";
 import './../components/Modal.css'
 axios.defaults.withCredentials = true;
 export default function Dashboard() {
-  
+  const[Rolle,setRolle]=useState("")
   const [openModal,setOpenModal] = useState(false);
 const [isVideoSelected, setIsVideoSelected] = useState(true);
   
@@ -15,7 +15,6 @@ const [isVideoSelected, setIsVideoSelected] = useState(true);
   const navigate = useNavigate();
   console.log(location);
   let user = location.state.user;
-
   const [images, setimages] = useState();
   const [research,setresearch]=useState([])
   const [data,setdata]=useState([])
@@ -68,7 +67,8 @@ const [isVideoSelected, setIsVideoSelected] = useState(true);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formdata = new FormData();
-    if (user.roll=="Student"){
+    console.log(user.role)
+    if (user.role=="Student"){
       formdata.append("image", images);
       console.log(formdata);
       const sendimage=await axios.post(' http://127.0.0.1:2001/plantdetection/',formdata,  {
@@ -80,8 +80,9 @@ const [isVideoSelected, setIsVideoSelected] = useState(true);
           })
         setdata(sendimage.data)
       }
-      else if (user.roll=="Research"){
+      else if (user.role=="Researcher"){
         formdata.append("image", images);
+        console.log("hjkoijhgv")
         console.log(formdata);
         const sendimage=await axios.post(' http://127.0.0.1:2001/research/',formdata,  {
               withCredentials: true, // Enable credentials (cookies, authentication headers)
@@ -92,7 +93,7 @@ const [isVideoSelected, setIsVideoSelected] = useState(true);
             })
           setdata(sendimage.data)
       }
-      else if(user.roll=="Industry"){
+      else if(user.role=="Industry"){
         formdata.append('video',images)
         console.log(formdata)
         const senddata=await axios.post(' http://127.0.0.1:2001/industry/',formdata,  {
@@ -158,7 +159,7 @@ const [isVideoSelected, setIsVideoSelected] = useState(true);
             Upload Image in Choose file button below
           </p>
           <input type="file" accept="image/*" capture="camera" onChange={handleImageInput} />
-          <button className="text-5xl modalBtn" onClick={(event)=> {event.preventDefault(); setOpenModal(true)}}>🔍</button>
+          <button type="submit" className="text-5xl modalBtn" onClick={(event)=> {event.preventDefault(); setOpenModal(true)}}>🔍</button>
 <br /><br /><br />
           <p
             style={{
@@ -181,6 +182,8 @@ const [isVideoSelected, setIsVideoSelected] = useState(true);
           <Modal open={openModal} onClose={()=> setOpenModal(false)}/>
         </form>
       </div>
+      <p>{data}</p>
+      <p>{research}</p>
     </div>
   );
 }

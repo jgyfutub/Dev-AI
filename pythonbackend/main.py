@@ -207,7 +207,7 @@ def industry():
 
 @app.route('/plantpapers/',methods=['POST'])
 def plantresearchpapers():
-    text_data = request.form.get('')
+    text_data = request.form.get('plant')
     for i in plantpapers.plantpapers:
         if i["plantName"]==text_data:
             return jsonify({"message":"Data sent to react","data":i["Links"]})

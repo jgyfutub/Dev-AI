@@ -24,7 +24,7 @@ const createAndSendToken = async (user, statusCode,time, res) => {
       sameSite: 'none',
     };
     if(time) cookieOptions.expires = new Date(Date.now() + process.env.COOKIE_JWT_EXPIRES * 24 * 60 * 60 * 1000);
-    //if(process.env.NODE_ENV === 'production')   cookieOptions.secure = true; 
+    if(process.env.NODE_ENV === 'production')   cookieOptions.secure = true; 
     res.cookie("jwt", token, cookieOptions);
     res.status(statusCode).json({
     status: "success",
