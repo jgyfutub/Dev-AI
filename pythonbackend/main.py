@@ -9,6 +9,9 @@ import numpy as np
 from PIL import Image
 from flask_cors import CORS
 import os
+import cv2 
+import random
+import plantpapers
 
 plantsarr=["Aloevera","Amla","Amruta_Balli","Arali","Ashoka","Ashwagandha","Avacado","Bamboo","Basale","Betel","Betel_Nut","Brahmi","Castor","Curry_Leaf","Doddapatre","Ekka","Ganike","Gauva","Geranium","Henna","Hibiscus","Honge","Insulin","Jasmine","Lemon","Lemon_grass","Mango","Mint","Nagadali","Neem","Nithyapushpa","Nooni","Pappaya","Pepper","Pomegranate","Raktachandini","Rose","Sapota","Tulasi","Wood_sorel"]
 plantdict={
@@ -60,6 +63,20 @@ UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 api_key="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"
 
+def generate_random_12_digit_number():
+    # Generate a random 11-digit number
+    rand_num = random.randint(10**11, (10**12)-1)
+    
+    # Ensure it has exactly 12 digits by appending a random digit (0-9)
+    twelve_digit_num = str(str(rand_num) + str(random.randint(0, 9)))
+    
+    return twelve_digit_num
+
+# Generate a random 12-digit number
+random_number = generate_random_12_digit_number()
+
+print(random_number)
+
 def requestgpt(text,api_key):
     URL = "https://api.openai.com/v1/chat/completions"
 
@@ -87,6 +104,7 @@ def load_img(path):
     return img
 def run_detector(path):
     img = load_img(path)
+    plantsarr=["Aloevera","Amla","Amruta_Balli","Arali","Ashoka","Ashwagandha","Avacado","Bamboo","Basale","Betel","Betel_Nut","Brahmi","Castor","Curry_Leaf","Doddapatre","Ekka","Ganike","Gauva","Geranium","Henna","Hibiscus","Honge","Insulin","Jasmine","Lemon","Lemon_grass","Mango","Mint","Nagadali","Neem","Nithyapushpa","Nooni","Pappaya","Pepper","Pomegranate","Raktachandini","Rose","Sapota","Tulasi","Wood_sorel"]
     module_handle = "https://tfhub.dev/google/faster_rcnn/openimages_v4/inception_resnet_v2/1"
     detector = hub.load(module_handle).signatures['default']
     print(1)
@@ -110,9 +128,10 @@ def run_detector(path):
         object_image=tf.cast(object_image,tf.float32)[:,:,:3][tf.newaxis,:]
         class_prob=model.predict(object_image)
         predicted_class=np.argmax(class_prob)
-        print(predicted_class)
         if class_prob[0][predicted_class]>.5:
+            print(plantsarr[predicted_class])
             arr.append(plantsarr[predicted_class])
+    print(Counter(arr))
     return Counter(arr)
 
 # print(requestgpt("fff",api_key))
@@ -130,14 +149,14 @@ def plantdetection():
         # Generate a filename using the current time (in milliseconds)
             filename = f"{int(time.time() * 1000)}.jpg"
             image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            objects=run_detector('C:/Users/Acer/OneDrive/Desktop/DevAI/Dev-AI/pythonbackend/uploads/'+filename)
+            objects=run_detector('C:/Users/Acer/OneDrive/Desktop/octern/Dev-AI/pythonbackend/uploads/'+filename)
             return jsonify({'message': 'plants detected successfully',"objects":objects})
         else:
             return jsonify({'error': 'No image provided in the request'}), 400
     else:
         return jsonify({'message': 'nothing'})
 
-@app.route('/research',methods=['POST'])
+@app.route('/research/',methods=['POST'])
 def research():
     if 'image' in request.files:
         image = request.files['image']
@@ -148,9 +167,9 @@ def research():
         # Generate a filename using the current time (in milliseconds)
             filename = f"{int(time.time() * 1000)}.jpg"
             image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            objects=run_detector('C:/Users/Acer/OneDrive/Desktop/DevAI/Dev-AI/pythonbackend/uploads/'+filename)
+            objects=run_detector('C:/Users/Acer/OneDrive/Desktop/octern/Dev-AI/pythonbackend/uploads/'+filename)
             dict={}
-            for i in objects.keys():
+            for i in objects:
                 dict.update({i:plantdict[i]})
             print(dict)
             return jsonify({'message': 'plants detected successfully',"Detected":dict})
@@ -158,5 +177,42 @@ def research():
             return jsonify({'error': 'No image provided in the request'}), 400
     else:
         return jsonify({'message': 'nothing'})
+    
+@app.route('/industry/',methods=['POST'])
+def industry():
+    if 'video' in request.files:
+        video = request.files['video']
+        print(video)
+        if video:
+            filename = f"{int(time.time() * 1000)}.mp4"
+            video.save("C:/Users/Acer/OneDrive/Desktop/octern/Dev-AI/pythonbackend/videos/"+filename)
+            cam = cv2.VideoCapture("C:/Users/Acer/OneDrive/Desktop/octern/Dev-AI/pythonbackend/videos/"+filename) 
+            print(filename)
+            currentframe = 0
+            detectedarr=[]
+            while(True): 
+                ret,frame = cam.read() 
+                if ret:
+                    name="videoframe#"+ generate_random_12_digit_number()+'.jpg'
+                    print(name)
+                    cv2.imwrite('C:/Users/Acer/OneDrive/Desktop/octern/Dev-AI/pythonbackend/videoframe/'+name, frame)
+                    objects=run_detector('C:/Users/Acer/OneDrive/Desktop/octern/Dev-AI/pythonbackend/videoframe/'+name)
+                    detectedarr.append(objects)
+                    os.remove('C:/Users/Acer/OneDrive/Desktop/octern/Dev-AI/pythonbackend/videoframe/'+name)
+            return jsonify({'message': 'plants detected successfully',"Detected":detectedarr})
+        else:
+            return jsonify({'error': 'No image provided in the request'}), 400
+    else:
+        return jsonify({'message': 'nothing'})
+
+@app.route('/plantpapers/',methods=['POST'])
+def plantresearchpapers():
+    text_data = request.form.get('')
+    for i in plantpapers.plantpapers:
+        if i["plantName"]==text_data:
+            return jsonify({"message":"Data sent to react","data":i["Links"]})
+    return jsonify({"message":"Data sent to react","data":""})
+
+                    
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True,port=2001)
