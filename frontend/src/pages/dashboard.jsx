@@ -44,7 +44,7 @@ export default function Dashboard() {
       } else {
         // Display an error message or prevent file selection
         console.error('Please select a video file.');
-        event.target.value = ''; 
+        event.target.value = null; 
         setIsVideoSelected(false);
       }
     };
@@ -125,7 +125,7 @@ export default function Dashboard() {
             <>
        <input type="file" accept="video/*"onChange={handleVideoInput} disabled={!isVideoSelected} onClick={handleInputClick} />
        <button className="text-5xl modalBtn" onClick={(event)=> {event.preventDefault(); setOpenModal(true)}}>🔍</button>
-            </>
+            </> 
       )}
           <Modal open={openModal} onClose={()=> setOpenModal(false)}/>
         </form>
