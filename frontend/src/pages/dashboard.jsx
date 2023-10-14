@@ -3,8 +3,13 @@ import { useNavigate, useLocation, NavLink, Link } from "react-router-dom";
 import Navigation from "../components/Navigation";
 import UserNavigation from "../components/UserNavigation";
 import axios from "axios";
+import Modal from "../components/Modal";
+import './../components/Modal.css'
 
 export default function Dashboard() {
+  
+  const [openModal,setOpenModal] = useState(false);
+  
   const location = useLocation();
   const navigate = useNavigate();
   console.log(location);
@@ -65,9 +70,11 @@ export default function Dashboard() {
             Upload Image in Choose file button below
           </p>
           <input type="file" onChange={handleImageInput} />
-          <button className="text-5xl">🔍</button>
+          <button className="text-5xl modalBtn" onClick={(event)=> {event.preventDefault(); setOpenModal(true)}}>🔍</button>
+          <Modal open={openModal} onClose={()=> setOpenModal(false)}/>
         </form>
       </div>
     </div>
   );
 }
+

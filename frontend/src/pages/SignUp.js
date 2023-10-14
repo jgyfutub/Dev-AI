@@ -108,11 +108,11 @@ const SignUp = () => {
               <label for="role" className="font-semibold text-sm text-gray-600 " >Choose your role:</label>
 
 <select name="role" id="role" className="mb-5 ml-10" onChange={(e)=>{handleRoleChange(e);getdata(e);}}>
-  <option value="student">Student</option>
-  <option value="researcher">Researcher</option>
-  <option value="industrialist">Industry</option>
+  <option value="Student">Student</option>
+  <option value="Researcher">Researcher</option>
+  <option value="Industrialist">Industry</option>
 </select>
-{selectedRole === 'researcher' && (
+{selectedRole === 'Researcher' && (
         <div>
           <label htmlFor="researcherInput" className="font-semibold text-sm text-gray-600 pb-1 block">College:</label>
           <input

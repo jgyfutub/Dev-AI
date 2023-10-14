@@ -14,8 +14,8 @@ const UserSchema = new mongoose.Schema({
     },
     email : {
         type : String,
-        require : [true,"plz provide an email id"],
-        unique : [true,"email already exists in database"],
+        require : [true,"Please provide an email id"],
+        unique : [true,"Email already exists in database"],
         lowercase : true,
         validate : [validator.isEmail,'Please provide a valid email']
     },
@@ -27,8 +27,8 @@ const UserSchema = new mongoose.Schema({
 
     role : {
         type : String,
-        enum : ['student','researcher','industrialist'],
-        default : 'student'
+        enum : ['Student','Researcher','Industrialist'],
+        default : 'Student'
     },
     college : String,
     password : {
@@ -44,7 +44,7 @@ const UserSchema = new mongoose.Schema({
             validator: function(el){
                 return el === this.password;
             },
-            message : "password don't match"
+            message : "password doesn't match"
         }
     },
     passwordChangedAt : Date,
