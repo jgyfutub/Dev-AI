@@ -4,9 +4,10 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 
-const plantFile = require('./../public/PlantData.json')
+const plantFile = require('./../public/PlantData.json');
+const { toFormData } = require('axios');
 const allPlantData = plantFile.map((i,obj,arr)=>{
-    return obj;
+    return i;
 });
 
 // module.exports = function verifylogin(username,password)
@@ -48,21 +49,44 @@ exports.userPhotoReOrg = (req, res, next) => {
 };
 
 exports.searchPlant = catchAsync(async (req,res,next)=>{
-    const jsRes = {plantName : req.plantName};
-    const plantData = allPlantData.filter(plant=>{
-      if(plant.plantName == req.plantName) return true;
+
+
+    const plantName = 'aloevera';
+    const jsRes = {};
+    jsRes.plantName = plantName?.toLowerCase()?.replace(' ','_');
+    let plantData = allPlantData.filter(plant=>{
+      if(plant?.plantName.toLowerCase()?.replace(' ','_') == jsRes.plantName) return true;
       return false;
     })
-    plantData = plantData && plantData[0].Links;
-    if(req.user.role == 'student');
-    else 
-      jsRes.links = plantData;
 
+
+    const formdata = new FormData();
+    formdata.append("image",);
+
+    plantData = plantData[0]?.Links;
+    if(req.user.role == 'student'){
+
+      jsRes.flaskResult = await axios.post('http://localhost:2001/plantdetection',formdata, {
+        withCredentials: true, // Enable credentials (cookies, authentication headers)
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded', // Specify the content type of your request
+          'Access-Control-Allow-Origin': '*', // Allow any origin to access your server
+        },
+      });
+    }
+    else if(req.user.role == 'student'){
+      jsRes.links = plantData;
+      jsRes.flaskResult = await axios.post('http://localhost:2001/research',formdata);
+    }
+    else{
+      jsRes.flaskResult = await axios.post('http://localhost:2001/industry',formdata);
+    }
+
+    console.log(jsRes.flaskResult);
     res.status(200).json({
       status : 'success',
       data:{
         data : jsRes
       }
     });
-    return next();
 })
