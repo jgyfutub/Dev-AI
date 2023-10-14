@@ -4,8 +4,7 @@ const authControllers = require("../controllers/authControllers");
 const searchControllers = require("../controllers/searchControllers");
 const router = express.Router();
 
-router.get(
-  "/search",
+router.post("/",
   authControllers.protect,
   searchControllers.searchPlant
 );

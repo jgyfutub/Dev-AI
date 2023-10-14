@@ -3,6 +3,7 @@ import { useNavigate, useLocation, NavLink, Link } from "react-router-dom";
 import Navigation from "../components/Navigation";
 import UserNavigation from "../components/UserNavigation";
 import axios from "axios";
+axios.defaults.withCredentials = true;
 
 export default function Dashboard() {
   const location = useLocation();
@@ -23,21 +24,19 @@ export default function Dashboard() {
     console.log(formdata);
     try {
       const senddata = await axios.post(
-        " http://127.0.0.1:5000/plantdetection/",
+        "http://localhost:5000/api/search/",
         formdata,
         {
-          withCredentials: true,
           headers: {
-            "Content-Type": "multipart/x-www-form-urlencoded",
-            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "multipart/form-data",
           },
         }
       );
-      navigate("/results", { state: { user, data: senddata.data } });
+      console.log(senddata);
+      //navigate("/results", { state: { user, data: senddata.data } });
     } catch (err) {
       console.log(err);
     }
-    window.location.reload();
   };
   return (
     <div>

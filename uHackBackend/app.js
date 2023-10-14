@@ -5,8 +5,6 @@ const helmet = require('helmet');
 const path = require('path');
 const appError = require('./utils/appError')
 const globalErrorHandler = require('./controllers/errorControllers')
-const userRouter = require('./routes/userRouter');
-const searchRouter = require('./routes/searchRouter');
 const rateLimit = require('express-rate-limit');
 const mongoSanitize = require('express-mongo-sanitize');
 const XSSClean = require('xss-clean');
@@ -23,7 +21,8 @@ const limiter = rateLimit({
 const app = express();
 
 app.use(cors({credentials:true, exposedHeaders: ["set-cookie"], origin: process.env.FRONT_END_URL}));
-
+const userRouter = require('./routes/userRouter');
+const searchRouter = require('./routes/searchRouter');
 //setting pug view engine for mails
 app.set('views', path.join(__dirname,'views'));
 app.set('view engine','pug');
