@@ -31,7 +31,7 @@ const LogOut = () => {
   if (loading) {
     return (
       <>
-        <h1>Thanku for using our website</h1>
+        <h1>Thank you for using our website</h1>
         <h1>Logging you out... <ClipLoader color="#000000" /></h1>
       </>
     );

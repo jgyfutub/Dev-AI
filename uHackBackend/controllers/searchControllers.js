@@ -4,6 +4,24 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 
+const plantFile = require('./../public/PlantData.json');
+const { toFormData } = require('axios');
+const allPlantData = plantFile.map((i,obj,arr)=>{
+    return i;
+});
+
+// module.exports = function verifylogin(username,password)
+// {
+//     const useracc = allAccountsobj.find(function(useraccs){
+//         if(useraccs.owner === username)
+//             return true;
+//         return undefined;
+//     })
+//     if(!useracc || useracc.pin != Number(password))
+//         return undefined;
+//     return useracc;
+// }
+
 const multerStorage = multer.memoryStorage();
 
 const multerFilter = (req, file, cb) => {
@@ -30,24 +48,45 @@ exports.userPhotoReOrg = (req, res, next) => {
   next();
 };
 
-const studentSerach = (req)=>{
-  
-}
-const researcherSearch = (req)=>{
-
-}
 exports.searchPlant = catchAsync(async (req,res,next)=>{
-    const jsRes = "";
-    if(req.user.role == 'student')
-      jsRes = studentSerach(req);
-    else 
-      jsRes = researcherSearch(req);
 
+
+    const plantName = 'aloevera';
+    const jsRes = {};
+    jsRes.plantName = plantName?.toLowerCase()?.replace(' ','_');
+    let plantData = allPlantData.filter(plant=>{
+      if(plant?.plantName.toLowerCase()?.replace(' ','_') == jsRes.plantName) return true;
+      return false;
+    })
+
+
+    const formdata = new FormData();
+    formdata.append("image",);
+
+    plantData = plantData[0]?.Links;
+    if(req.user.role == 'student'){
+
+      jsRes.flaskResult = await axios.post('http://localhost:2001/plantdetection',formdata, {
+        withCredentials: true, // Enable credentials (cookies, authentication headers)
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded', // Specify the content type of your request
+          'Access-Control-Allow-Origin': '*', // Allow any origin to access your server
+        },
+      });
+    }
+    else if(req.user.role == 'student'){
+      jsRes.links = plantData;
+      jsRes.flaskResult = await axios.post('http://localhost:2001/research',formdata);
+    }
+    else{
+      jsRes.flaskResult = await axios.post('http://localhost:2001/industry',formdata);
+    }
+
+    console.log(jsRes.flaskResult);
     res.status(200).json({
       status : 'success',
       data:{
         data : jsRes
       }
     });
-    return next();
 })

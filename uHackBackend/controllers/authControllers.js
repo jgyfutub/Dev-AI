@@ -24,7 +24,7 @@ const createAndSendToken = async (user, statusCode,time, res) => {
       sameSite: 'none',
     };
     if(time) cookieOptions.expires = new Date(Date.now() + process.env.COOKIE_JWT_EXPIRES * 24 * 60 * 60 * 1000);
-    if(process.env.NODE_ENV === 'production')   cookieOptions.secure = true; 
+    //if(process.env.NODE_ENV === 'production')   cookieOptions.secure = true; 
     res.cookie("jwt", token, cookieOptions);
     res.status(statusCode).json({
     status: "success",
@@ -59,7 +59,8 @@ exports.signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     username: req.body.username,
     password: req.body.password,
-    role: req.body.role || 'student',
+    role: req.body.role || 'Student',
+    college : req.body.college || '',
     passwordConfirm: req.body.passwordConfirm,
   });
   if (!newUser) next(new AppError(`Account can't be created`), 404);

@@ -49,6 +49,13 @@ const LogIn = () => {
           email,
           password,
           rememberMe
+        },
+        {
+          withCredentials : true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "Access-Control-Allow-Origin": "*",
+          },
         })
         if(res.status===200){
           toast.success("Login Successful")

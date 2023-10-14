@@ -7,12 +7,27 @@ import Navigation from "../components/Navigation";
 import "react-toastify/dist/ReactToastify.css";
 axios.defaults.withCredentials = true;
 const SignUp = () => {
+  const [selectedRole, setSelectedRole] = useState('');
+  const [researcherInput, setResearcherInput] = useState('');
+
+  const handleRoleChange = (event) => {
+    const selectedValue = event.target.value;
+    console.log(event.target.value);
+    setSelectedRole(selectedValue);
+  };
+
+  const handleResearcherInputChange = (event) => {
+    const inputValue = event.target.value;
+    setResearcherInput(inputValue);
+  };
+
   const navigate = useNavigate();
   const location = useLocation();
   const [input, setInput] = useState({
     email: "",
     uname: "",
     role: "",
+    researcherInput:"",
     username: "",
     password: "",
     passwordconfirm: "",
@@ -33,7 +48,7 @@ const SignUp = () => {
   const addData = async(e) => {
     e.preventDefault();
     setMessage({ messaged: "" });
-    const { email,uname, role, username, password, passwordConfirm } = input;
+    const { email,uname, role, college, username, password, passwordConfirm } = input;
     if (email === "") toast.warning("Please enter Email");
     //else if (!email.includes("@mnnit.ac.in")) toast.warning("Please enter valid Email");
     else if (username === "") toast.warning("Please enter Username");
@@ -50,6 +65,7 @@ const SignUp = () => {
           .post("http://localhost:5000/api/users/signup", {
             uname,
             role,
+            researcherInput ,
             email,
             username,
             password,
@@ -91,11 +107,23 @@ const SignUp = () => {
               />
               <label for="role" className="font-semibold text-sm text-gray-600 " >Choose your role:</label>
 
-<select name="role" id="role" className="mb-5 ml-10">
-  <option value="student">Student</option>
-  <option value="researcher">Researcher</option>
-  <option value="industrialist">Industry</option>
+<select name="role" id="role" className="mb-5 ml-10" onChange={(e)=>{handleRoleChange(e);getdata(e);}}>
+  <option value="Student">Student</option>
+  <option value="Researcher">Researcher</option>
+  <option value="Industrialist">Industry</option>
 </select>
+{selectedRole === 'Researcher' && (
+        <div>
+          <label htmlFor="researcherInput" className="font-semibold text-sm text-gray-600 pb-1 block">College:</label>
+          <input
+            type="text"
+            id="researcherInput"
+            //value={researcherInput}
+            onChange={(e)=>{handleResearcherInputChange(e);getdata(e);}}
+            className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
+          />
+        </div>
+      )}
               <label className="font-semibold text-sm text-gray-600 pb-1 block">
                 E-mail
               </label>

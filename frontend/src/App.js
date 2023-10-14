@@ -17,6 +17,8 @@ import UpdateUser from "./pages/UpdateUser";
 import ChatList from "./pages/ChatList";
 import AllChatList from "./pages/AllChatList"
 import UpdatePassword from "./pages/UpdatePassword";
+import Dashboard from "./pages/dashboard";
+import Result from "./pages/results";
 
 function App() {
   // const [user, setUser] = useState();
@@ -27,6 +29,8 @@ function App() {
           
           <Routes>
             <Route exact path="/" Component={Home}></Route>
+            <Route path='/dashboard' Component={Dashboard}></Route>
+            <Route path='/result' Component={Result}></Route>
             <Route path="/signup" Component={SignUp}></Route>
             <Route path="/login" Component={LogIn}></Route>
             <Route path="/askotp" Component={AskOTP}></Route>

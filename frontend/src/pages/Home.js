@@ -54,6 +54,13 @@ const Home = () => {
       );
       if (res.status === 200) {
         setUser(res.data.data.user);
+        console.log(res.data.data.user)
+        navigate("/dashboard",{
+          state: {
+            //...values
+            user : res.data.data.user
+          }
+        });
       }
     } catch (e) {
       console.log(e);
@@ -276,8 +283,8 @@ const Home = () => {
     if (loading) {
       return (
         <>
-          <h1>
-            ...loading <ClipLoader color="#000000" />
+          <h1 style={{color: "red", textAlign:"center"}}>
+            Loading <ClipLoader color="blue" />
           </h1>
           <ToastContainer />
         </>
@@ -307,7 +314,7 @@ const Home = () => {
       <br />
       <div className="flex fixed z-10 top-24">
         <label htmlFor="sort"></label>
-        <select
+        {/* <select
           name="sort"
           id="sort"
           defaultValue="-createdAt"
@@ -320,9 +327,9 @@ const Home = () => {
           <option value="-price">Price ↓</option>
           <option value="-createdAt">Recent ↓</option>
           <option value="createdAt">Recent ↑</option>
-        </select>
+        </select> */}
         <div>
-          <button
+          {/* <button
             id="dropdownDefault"
             onClick={() => {
               filter ? setFilter(false) : setFilter(true);
@@ -348,7 +355,7 @@ const Home = () => {
               />
             </svg>
           </button>
-          {showFilters()}
+          {showFilters()} */}
         </div>
       </div>
       <br />
