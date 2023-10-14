@@ -1,11 +1,11 @@
 import Navigation from "../components/Navigation";
 
 const Info = ()=>{
-return(
+  return(
     <>
     <Navigation />
     <br /><br /><br /><br />
-    <h1>Not Logged in</h1>
+    <div></div>
     </>
   )
 }
