@@ -9,7 +9,7 @@ axios.defaults.withCredentials = true;
 export default function Dashboard() {
   
   const [openModal,setOpenModal] = useState(false);
-  const [isVideoSelected, setIsVideoSelected] = useState(true);
+const [isVideoSelected, setIsVideoSelected] = useState(true);
   
   const location = useLocation();
   const navigate = useNavigate();
@@ -17,38 +17,43 @@ export default function Dashboard() {
   let user = location.state.user;
 
   const [images, setimages] = useState();
-  const handleImageInput = (event) => {
+  const [research,setresearch]=useState([])
+  const [data,setdata]=useState([])
+    const handleImageInput = (event) => {
     const file = event.target.files[0];
     if (file) {
         // Check if the selected file is an image
-        if (file.type.startsWith('image/')) {
+        if (file.type.startsWith('image/' || file.type.startsWith('video/'))) {
           // Handle the image file
           setimages(file);
           console.log(`Selected image: ${file.name}`);
+          setIsVideoSelected(true);
         } else {
           // Display an error message or prevent file selection
           setimages(console.error('Please select an image file.'));
-        }
+          event.target.value = null; 
+          setIsVideoSelected(false);
+}
       }
     console.log(images);
   };
 
-  const handleVideoInput = (event) => {
-    const selectedFile = event.target.files[0];
-    if (selectedFile) {
-      // Check if the selected file is a video
-      if (selectedFile.type.startsWith('video/')) {
-        // Handle the video file
-        console.log(`Selected video: ${selectedFile.name}`);
-        setIsVideoSelected(true);
-      } else {
-        // Display an error message or prevent file selection
-        console.error('Please select a video file.');
-        event.target.value = null; 
-        setIsVideoSelected(false);
-      }
-    };
-  };
+  // const handleVideoInput = (event) => {
+  //   const selectedFile = event.target.files[0];
+  //   if (selectedFile) {
+  //     // Check if the selected file is a video
+  //     if (selectedFile.type.startsWith('video/')) {
+  //       // Handle the video file
+  //       console.log(`Selected video: ${selectedFile.name}`);
+  //       setIsVideoSelected(true);
+  //     } else {
+  //       // Display an error message or prevent file selection
+  //       console.error('Please select a video file.');
+  //       event.target.value = null; 
+  //       setIsVideoSelected(false);
+  //     }
+  //   };
+  // };
 
   const handleInputClick = () => {
     if (!isVideoSelected) {
@@ -63,23 +68,69 @@ export default function Dashboard() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formdata = new FormData();
-    formdata.append("image", images[0]);
-    console.log(formdata);
-    try {
-      const senddata = await axios.post(
-        "http://localhost:5000/api/search/",
-        formdata,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      console.log(senddata);
-      //navigate("/results", { state: { user, data: senddata.data } });
-    } catch (err) {
-      console.log(err);
-    }
+    if (user.roll=="Student"){
+      formdata.append("image", images);
+      console.log(formdata);
+      const sendimage=await axios.post(' http://127.0.0.1:2001/plantdetection/',formdata,  {
+            withCredentials: true, // Enable credentials (cookies, authentication headers)
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded', // Specify the content type of your request
+              'Access-Control-Allow-Origin': '*', // Allow any origin to access your server
+            },
+          })
+        setdata(sendimage.data)
+      }
+      else if (user.roll=="Research"){
+        formdata.append("image", images);
+        console.log(formdata);
+        const sendimage=await axios.post(' http://127.0.0.1:2001/research/',formdata,  {
+              withCredentials: true, // Enable credentials (cookies, authentication headers)
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded', // Specify the content type of your request
+                'Access-Control-Allow-Origin': '*', // Allow any origin to access your server
+              },
+            })
+          setdata(sendimage.data)
+      }
+      else if(user.roll=="Industry"){
+        formdata.append('video',images)
+        console.log(formdata)
+        const senddata=await axios.post(' http://127.0.0.1:2001/industry/',formdata,  {
+            withCredentials: true, // Enable credentials (cookies, authentication headers)
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded', // Specify the content type of your request
+              'Access-Control-Allow-Origin': '*', // Allow any origin to access your server
+            },
+          })
+          for(const i of Object.keys(senddata.data.Detected)){
+            const formdata1=new FormData()
+            formdata.append("plant",i)
+            const sendplantname=await axios.post('http://127.0.0.1:2001/plantpapers/',formdata,  {
+              withCredentials: true, 
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded', 
+                'Access-Control-Allow-Origin': '*', 
+              },
+            })
+            setresearch([...research,sendplantname.data.data])
+          }
+        setdata(senddata.data)
+      }
+    // try {
+    //   const senddata = await axios.post(
+    //     "http://localhost:5000/api/search/",
+    //     formdata,
+    //     {
+    //       headers: {
+    //         "Content-Type": "multipart/form-data",
+    //       },
+    //     }
+    //   );
+    //   console.log(senddata);
+    //   //navigate("/results", { state: { user, data: senddata.data } });
+    // } catch (err) {
+    //   console.log(err);
+    // }
   };
   return (
     <div>
@@ -108,7 +159,7 @@ export default function Dashboard() {
           </p>
           <input type="file" accept="image/*" capture="camera" onChange={handleImageInput} />
           <button className="text-5xl modalBtn" onClick={(event)=> {event.preventDefault(); setOpenModal(true)}}>🔍</button>
-          <br /><br /><br />
+<br /><br /><br />
           <p
             style={{
               backgroundColor: "black",
@@ -123,7 +174,7 @@ export default function Dashboard() {
           </p>
           {user.role === 'Industrialist' && (
             <>
-       <input type="file" accept="video/*"onChange={handleVideoInput} disabled={!isVideoSelected} onClick={handleInputClick} />
+       <input type="file" accept="video/*" disabled={!isVideoSelected} onClick={handleInputClick} />
        <button className="text-5xl modalBtn" onClick={(event)=> {event.preventDefault(); setOpenModal(true)}}>🔍</button>
             </> 
       )}

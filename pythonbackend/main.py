@@ -11,6 +11,7 @@ from flask_cors import CORS
 import os
 import cv2 
 import random
+import plantpapers
 
 plantsarr=["Aloevera","Amla","Amruta_Balli","Arali","Ashoka","Ashwagandha","Avacado","Bamboo","Basale","Betel","Betel_Nut","Brahmi","Castor","Curry_Leaf","Doddapatre","Ekka","Ganike","Gauva","Geranium","Henna","Hibiscus","Honge","Insulin","Jasmine","Lemon","Lemon_grass","Mango","Mint","Nagadali","Neem","Nithyapushpa","Nooni","Pappaya","Pepper","Pomegranate","Raktachandini","Rose","Sapota","Tulasi","Wood_sorel"]
 plantdict={
@@ -148,7 +149,7 @@ def plantdetection():
         # Generate a filename using the current time (in milliseconds)
             filename = f"{int(time.time() * 1000)}.jpg"
             image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            objects=run_detector('C:/Users/Acer/OneDrive/Desktop/DevAI/Dev-AI/pythonbackend/uploads/'+filename)
+            objects=run_detector('C:/Users/Acer/OneDrive/Desktop/octern/Dev-AI/pythonbackend/uploads/'+filename)
             return jsonify({'message': 'plants detected successfully',"objects":objects})
         else:
             return jsonify({'error': 'No image provided in the request'}), 400
@@ -166,7 +167,7 @@ def research():
         # Generate a filename using the current time (in milliseconds)
             filename = f"{int(time.time() * 1000)}.jpg"
             image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            objects=run_detector('C:/Users/Acer/OneDrive/Desktop/DevAI/Dev-AI/pythonbackend/uploads/'+filename)
+            objects=run_detector('C:/Users/Acer/OneDrive/Desktop/octern/Dev-AI/pythonbackend/uploads/'+filename)
             dict={}
             for i in objects:
                 dict.update({i:plantdict[i]})
@@ -184,8 +185,8 @@ def industry():
         print(video)
         if video:
             filename = f"{int(time.time() * 1000)}.mp4"
-            video.save("C:/Users/Acer/OneDrive/Desktop/DevAI/Dev-AI/pythonbackend/videos/"+filename)
-            cam = cv2.VideoCapture("C:/Users/Acer/OneDrive/Desktop/DevAI/Dev-AI/pythonbackend/videos/"+filename) 
+            video.save("C:/Users/Acer/OneDrive/Desktop/octern/Dev-AI/pythonbackend/videos/"+filename)
+            cam = cv2.VideoCapture("C:/Users/Acer/OneDrive/Desktop/octern/Dev-AI/pythonbackend/videos/"+filename) 
             print(filename)
             currentframe = 0
             detectedarr=[]
@@ -194,17 +195,24 @@ def industry():
                 if ret:
                     name="videoframe#"+ generate_random_12_digit_number()+'.jpg'
                     print(name)
-                    cv2.imwrite('C:/Users/Acer/OneDrive/Desktop/DevAI/Dev-AI/pythonbackend/videoframe/'+name, frame)
-                    objects=run_detector('C:/Users/Acer/OneDrive/Desktop/DevAI/Dev-AI/pythonbackend/videoframe/'+name)
+                    cv2.imwrite('C:/Users/Acer/OneDrive/Desktop/octern/Dev-AI/pythonbackend/videoframe/'+name, frame)
+                    objects=run_detector('C:/Users/Acer/OneDrive/Desktop/octern/Dev-AI/pythonbackend/videoframe/'+name)
                     detectedarr.append(objects)
-                    os.remove('C:/Users/Acer/OneDrive/Desktop/DevAI/Dev-AI/pythonbackend/videoframe/'+name)
+                    os.remove('C:/Users/Acer/OneDrive/Desktop/octern/Dev-AI/pythonbackend/videoframe/'+name)
             return jsonify({'message': 'plants detected successfully',"Detected":detectedarr})
         else:
             return jsonify({'error': 'No image provided in the request'}), 400
     else:
         return jsonify({'message': 'nothing'})
+
+@app.route('/plantpapers/',methods=['POST'])
+def plantresearchpapers():
+    text_data = request.form.get('')
+    for i in plantpapers.plantpapers:
+        if i["plantName"]==text_data:
+            return jsonify({"message":"Data sent to react","data":i["Links"]})
+    return jsonify({"message":"Data sent to react","data":""})
+
                     
-
-
 if __name__ == '__main__':
     app.run(debug=True,port=2001)
