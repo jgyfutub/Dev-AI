@@ -7,14 +7,16 @@ import Modal from "../components/Modal";
 import './../components/Modal.css'
 axios.defaults.withCredentials = true;
 export default function Dashboard() {
-  const[Rolle,setRolle]=useState("")
   const [openModal,setOpenModal] = useState(false);
 const [isVideoSelected, setIsVideoSelected] = useState(true);
-  
+  const [plant,setplant]=useState([])
   const location = useLocation();
   const navigate = useNavigate();
   console.log(location);
   let user = location.state.user;
+  const[Rolle,setRolle]=useState(user.role)
+  console.log(Rolle)
+  const [info,setinfo]=useState([])
   const [images, setimages] = useState();
   const [research,setresearch]=useState([])
   const [data,setdata]=useState([])
@@ -65,10 +67,11 @@ const [isVideoSelected, setIsVideoSelected] = useState(true);
 
 
   const handleSubmit = async (e) => {
+    console.log(Rolle)
     e.preventDefault();
     const formdata = new FormData();
     console.log(user.role)
-    if (user.role=="Student"){
+    if (Rolle=="Student"){
       formdata.append("image", images);
       console.log(formdata);
       const sendimage=await axios.post(' http://127.0.0.1:2001/plantdetection/',formdata,  {
@@ -78,11 +81,20 @@ const [isVideoSelected, setIsVideoSelected] = useState(true);
               'Access-Control-Allow-Origin': '*', // Allow any origin to access your server
             },
           })
-        setdata(sendimage.data)
+          setdata(sendimage.data.objects)
+          for(const i of Object.keys(data)){
+            setplant([...plant,i])
+          }
+          for(const i of Object.values(data)){
+            setinfo([...info,toString(i)])
+          }
       }
-      else if (user.role=="Researcher"){
+
+
+      else if (Rolle=="researcher"){
         formdata.append("image", images);
         console.log("hjkoijhgv")
+        console.log(Rolle)
         console.log(formdata);
         const sendimage=await axios.post(' http://127.0.0.1:2001/research/',formdata,  {
               withCredentials: true, // Enable credentials (cookies, authentication headers)
@@ -92,18 +104,7 @@ const [isVideoSelected, setIsVideoSelected] = useState(true);
               },
             })
           setdata(sendimage.data)
-      }
-      else if(user.role=="Industry"){
-        formdata.append('video',images)
-        console.log(formdata)
-        const senddata=await axios.post(' http://127.0.0.1:2001/industry/',formdata,  {
-            withCredentials: true, // Enable credentials (cookies, authentication headers)
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded', // Specify the content type of your request
-              'Access-Control-Allow-Origin': '*', // Allow any origin to access your server
-            },
-          })
-          for(const i of Object.keys(senddata.data.Detected)){
+          for(const i of Object.keys(sendimage.data.Detected)){
             const formdata1=new FormData()
             formdata.append("plant",i)
             const sendplantname=await axios.post('http://127.0.0.1:2001/plantpapers/',formdata,  {
@@ -113,9 +114,28 @@ const [isVideoSelected, setIsVideoSelected] = useState(true);
                 'Access-Control-Allow-Origin': '*', 
               },
             })
+            console.log(sendplantname.data.data)
             setresearch([...research,sendplantname.data.data])
           }
-        setdata(senddata.data)
+        setdata(sendimage.data.Detected)
+        for(const i of data){
+          console.log(i)
+          setplant([...plant,i])
+          setinfo([...info,data[i]])
+        }
+      }
+
+
+      else if(Rolle=="Industry"){
+        formdata.append('video',images)
+        console.log(formdata)
+        const senddata=await axios.post(' http://127.0.0.1:2001/industry/',formdata,  {
+            withCredentials: true, // Enable credentials (cookies, authentication headers)
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded', // Specify the content type of your request
+              'Access-Control-Allow-Origin': '*', // Allow any origin to access your server
+            },
+          })
       }
     // try {
     //   const senddata = await axios.post(
@@ -158,32 +178,14 @@ const [isVideoSelected, setIsVideoSelected] = useState(true);
           >
             Upload Image in Choose file button below
           </p>
-          <input type="file" accept="image/*" capture="camera" onChange={handleImageInput} />
-          <button type="submit" className="text-5xl modalBtn" onClick={(event)=> {event.preventDefault(); setOpenModal(true)}}>🔍</button>
+          <input type="file" onChange={handleImageInput} />
+          <button className="text-5xl modalBtn" >🔍</button>
 <br /><br /><br />
-          <p
-            style={{
-              backgroundColor: "black",
-              color: "white",
-              paddingBlock: 20,
-              paddingInline: 30,
-              borderRadius: 10,
-              marginBottom: 20,
-            }}
-          >
-            Upload a video
-          </p>
-          {user.role === 'Industrialist' && (
-            <>
-       <input type="file" accept="video/*" disabled={!isVideoSelected} onClick={handleInputClick} />
-       <button className="text-5xl modalBtn" onClick={(event)=> {event.preventDefault(); setOpenModal(true)}}>🔍</button>
-            </> 
-      )}
-          <Modal open={openModal} onClose={()=> setOpenModal(false)}/>
+
         </form>
       </div>
-      <p>{data}</p>
-      <p>{research}</p>
+      <p style={{color:"black"}}>{plant}</p>
+      <p style={{color:"black"}}>{info}</p>
     </div>
   );
 }
